@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 🛡️ VoterWise Authoritative Security Protocol
+    
+    // Public Access: Read-only for authoritative civic datasets
+    match /states/{state} { allow read: if true; allow write: if false; }
+    match /districts/{district} { allow read: if true; allow write: if false; }
+    match /schedule/{election} { allow read: if true; allow write: if false; }
+    match /constituencies/{constituency} { allow read: if true; allow write: if false; }
+    match /members/{member} { allow read: if true; allow write: if false; }
+    match /polling_booths/{booth} { allow read: if true; allow write: if false; }
+
+    // User Access: Protected registration and preference data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Administrative Ingestion: Restricted to internal system service accounts
+    // (Actual writes are handled via Firebase Admin SDK in Cloud Functions)
+    match /{path=**} {
+      allow write: if false;
+    }
+  }
+}

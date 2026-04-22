@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoterWise | Authoritative Indian Election Guide</title>
+    <!-- Google Maps API for Navigation Accessibility -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_MAPS_API_KEY%&libraries=places,geometry&loading=async"></script>
+    <meta name="description" content="VoterWise — Your AI-powered civic assistant for Indian elections. Get personalized ECI deadlines, AI guidance powered by Google Gemini, and everything to make your vote count." />
+    <meta name="theme-color" content="#0a0a0c" />
+
+    <!-- Robust Preconnect Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" media="print" onload="this.media='all'" />
+
+    <style>
+      :root { --shimmer-bg: rgba(255, 255, 255, 0.03); --shimmer-highlight: rgba(255, 255, 255, 0.08); }
+      @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+      .shimmer {
+        background: linear-gradient(90deg, var(--shimmer-bg) 25%, var(--shimmer-highlight) 50%, var(--shimmer-bg) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite linear;
+      }
+    </style>
+
+    <title>VoterWise — AI Civic Assistant for Indian Elections</title>
+    
+    <!-- Critical CSS for Instant LCP -->
+    <style>
+      :root { --bg-primary: #0a0a0c; --text-primary: #f0f0f5; --accent-primary: #ff9933; --font-heading: 'Outfit', sans-serif; }
+      body { background-color: var(--bg-primary); color: var(--text-primary); margin: 0; font-family: sans-serif; }
+      .hero-section { padding: 3rem 0 4rem; position: relative; opacity: 1 !important; }
+      .hero-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+      h1 { font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem; opacity: 1 !important; }
+      .adhikar-span { font-weight: 900; background: linear-gradient(to bottom, #FF9933 0%, #FFFFFF 50%, #128807 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

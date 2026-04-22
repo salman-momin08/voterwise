@@ -1,0 +1,338 @@
+/* ─── App Layout ─── */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#main-content {
+  flex: 1;
+  padding-top: 60px; /* Reduced from var-based to fix content position */
+  background: radial-gradient(circle at top left, rgba(255, 153, 51, 0.02), transparent 30%),
+              radial-gradient(circle at bottom right, rgba(19, 136, 8, 0.02), transparent 30%);
+}
+
+.view-container {
+  padding-bottom: var(--space-xl);
+}
+
+.view-header {
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+.view-header h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--space-xs);
+  letter-spacing: -0.03em;
+}
+
+.view-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Floating Assistant */
+.floating-assistant {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  width: 400px;
+  height: 620px;
+  max-height: calc(100vh - 100px);
+  z-index: 1000;
+  transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-2xl);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.floating-assistant.open {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .floating-assistant {
+    width: calc(100vw - 40px);
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 4px var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: var(--accent-primary);
+  background: rgba(255, 153, 51, 0.05);
+}
+
+.nav-item.assistant-btn {
+  color: var(--accent-primary);
+  border: 1px solid rgba(255, 153, 51, 0.2);
+  background: rgba(255, 153, 51, 0.05);
+}
+
+.nav-item.assistant-btn:hover {
+  background: rgba(255, 153, 51, 0.1);
+  border-color: rgba(255, 153, 51, 0.4);
+}
+
+
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: var(--space-3xl);
+  align-items: start;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 80px;
+}
+
+/* ─── Footer ─── */
+.footer {
+  margin-top: var(--space-md);
+  padding: var(--space-xl) 0;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer p {
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-lg);
+  font-size: 0.85rem;
+}
+
+
+
+/* ─── Skeleton Loading ─── */
+.view-skeleton {
+  width: 100%;
+  min-height: 500px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.skeleton-header {
+  height: 40px;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-content {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Setup Screen ─── */
+.setup-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: var(--space-xl);
+}
+
+.setup-card {
+  max-width: 560px;
+  width: 100%;
+  padding: var(--space-2xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.setup-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.setup-header h1 {
+  font-size: 1.6rem;
+}
+
+.spin-icon {
+  color: var(--accent-primary);
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.setup-intro {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.check-item.done {
+  color: var(--success);
+  border-left: 3px solid var(--success);
+}
+
+.check-item.pending {
+  color: var(--warning);
+  border-left: 3px solid var(--warning);
+}
+
+/* Consolidated main content class */
+.main-content {
+  padding-top: var(--space-md);
+  min-height: calc(100vh - 100px);
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+  padding-bottom: var(--space-sm);
+}
+
+.setup-instructions {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.1);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-xl);
+}
+
+.setup-instructions h3 {
+  margin-bottom: var(--space-sm);
+  font-size: 0.95rem;
+}
+
+.setup-instructions ol {
+  padding-left: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.setup-instructions li {
+  margin-bottom: var(--space-xs);
+  line-height: 1.5;
+}
+
+.setup-instructions code {
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  color: var(--accent-primary);
+  font-size: 0.82rem;
+}
+
+.setup-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ─── Responsive Layout ─── */
+@media (max-width: 1100px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-sidebar {
+    position: static;
+    max-width: 450px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding-top: var(--space-xl);
+  }
+
+  .setup-card {
+    padding: var(--space-lg);
+  }
+
+  .setup-actions {
+    flex-direction: column;
+  }
+
+  .setup-actions .btn-primary,
+  .setup-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}

@@ -1,0 +1,388 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* High Contrast Palette (Aiming for 21:1 for critical text) */
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #131318;
+  --bg-tertiary: #1e1e26;
+  --bg-card: rgba(20, 20, 28, 0.85);
+  
+  --text-primary: #f0f0f5;
+  --text-secondary: #a1a1b5;
+  --text-tertiary: #6e6e82;
+  
+  --accent-primary: #ff9933; /* Saffron/India Orange */
+  --accent-secondary: #138808; /* India Green */
+  --accent-glow: rgba(255, 153, 51, 0.35);
+  --accent-green-glow: rgba(19, 136, 8, 0.3);
+  
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+
+  /* Typography */
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  
+  /* Spacing – consistent 4px base grid */
+  --space-xs: 0.2rem;    /* ~3px */
+  --space-sm: 0.4rem;    /* ~6px */
+  --space-md: 0.6rem;    /* ~10px */
+  --space-lg: 0.8rem;    /* ~13px */
+  --space-xl: 1.25rem;   /* 20px */
+  --space-2xl: 1.75rem;  /* 28px */
+  --space-3xl: 2.5rem;   /* 40px */
+  --space-4xl: 3.5rem;   /* 56px */
+
+  /* Layout */
+  --container-width: 1200px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
+  /* Animations */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Accessibility */
+  --focus-ring: 0 0 0 3px var(--accent-glow);
+  
+  /* Button min-size for touch targets (WCAG 2.5.5 Level AAA) */
+  --btn-min-height: 44px;
+  --btn-min-width: 44px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+a, button {
+  font-family: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+/* Focus states for accessibility */
+button:focus-visible, 
+a:focus-visible, 
+input:focus-visible, 
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--space-2xl);
+}
+
+/* ─── Glassmorphism Utility ─── */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Global Button Styles ─── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), #e67a00);
+  color: white;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: var(--btn-min-height);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 153, 51, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: var(--btn-min-height);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* ─── Section header styles ─── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-lg);
+  background: rgba(255, 153, 51, 0.08);
+  border: 1px solid rgba(255, 153, 51, 0.15);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-lg);
+}
+
+/* ─── Google services badge ─── */
+.google-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.google-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+/* ─── Accessibility: Skip Link ─── */
+.skip-link {
+  position: absolute;
+  top: -50px;
+  left: var(--space-lg);
+  background: var(--accent-primary);
+  color: white;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  z-index: 2000;
+  transition: top 0.2s;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ─── Styled Select/Dropdown ─── */
+select {
+  appearance: none;
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: var(--space-md) 2.5rem var(--space-md) var(--space-lg) !important;
+  border-radius: var(--radius-md) !important;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  min-height: var(--btn-min-height);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  transition: var(--transition-fast);
+}
+
+select:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+select:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: var(--focus-ring);
+}
+
+option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 12px;
+}
+
+/* ─── Google Translate Overrides ─── */
+/* Hide the top banner and all Google Translate UI chrome */
+body > .skiptranslate {
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+iframe.goog-te-banner-frame {
+  display: none !important;
+}
+
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Disable text highlighting from translation */
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+
+
+/* ─── Tooltip Utility ─── */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ─── Party symbol in ballot ─── */
+.party-symbol {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-family: var(--font-heading);
+  background: linear-gradient(135deg, rgba(255, 153, 51, 0.15), rgba(19, 136, 8, 0.15));
+  border: 1px solid rgba(255, 153, 51, 0.2);
+  color: var(--accent-primary);
+}

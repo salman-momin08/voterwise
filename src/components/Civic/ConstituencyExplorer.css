@@ -1,0 +1,241 @@
+.explorer-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.explorer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -1rem;
+}
+
+.spinner-mini {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.explorer-header {
+  text-align: center;
+}
+
+.explorer-header .title-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xs);
+}
+
+.explorer-header h2 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.explorer-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.explorer-selectors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.select-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.select-box label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.select-box select {
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select-box select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.1);
+}
+
+.explorer-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  border-left: 3px solid var(--accent-primary);
+  padding-left: var(--space-md);
+}
+
+.section-title h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-lg);
+}
+
+.member-card {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.member-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 153, 51, 0.3);
+}
+
+.member-role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(255, 153, 51, 0.1);
+  color: var(--accent-primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-xs);
+}
+
+.member-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.member-party {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.member-const {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.profile-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.profile-link:hover {
+  color: var(--text-primary);
+}
+
+.districts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+.district-chip {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.district-chip:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.district-chip .arrow {
+  margin-left: auto;
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.district-chip:hover .arrow {
+  opacity: 0.5;
+  transform: translateX(4px);
+}
+
+.explorer-placeholder {
+  padding: var(--space-4xl) 0;
+  text-align: center;
+  color: var(--text-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.placeholder-icon {
+  opacity: 0.2;
+}
+
+.explorer-placeholder h3 {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+}
+
+@media (max-width: 640px) {
+  .explorer-selectors {
+    grid-template-columns: 1fr;
+  }
+}
