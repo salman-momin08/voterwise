@@ -3,15 +3,15 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [
     react(),
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        const apiKey = process.env.VITE_GOOGLE_MAPS_API_KEY || (mode === 'test' ? 'test-api-key' : '');
-        return html.replace(/%VITE_GOOGLE_MAPS_API_KEY%/g, apiKey);
-      },
+        return html.replace(/%VITE_GOOGLE_MAPS_API_KEY%/g, process.env.VITE_GOOGLE_MAPS_API_KEY || 'test-key')
+                   .replace(/%VITE_GEMINI_API_KEY%/g, process.env.VITE_GEMINI_API_KEY || 'test-key');
+      }
     },
     visualizer({
       filename: './dist/stats.html',

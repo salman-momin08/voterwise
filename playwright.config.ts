@@ -18,7 +18,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev -- --mode test',
+    command: 'npm run dev -- --port 5173 --strictPort --mode test',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
   },
