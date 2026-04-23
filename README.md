@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/badge/Status-Production--Ready-success)](https://election-process-fcbf9.web.app)
 [![Security](https://img.shields.io/badge/Security-Firebase--Hardened-blue)](https://firebase.google.com)
-[![AI](https://img.shields.io/badge/AI-Gemini--2.0--Flash-orange)](https://deepmind.google/technologies/gemini/)
+[![AI](https://img.shields.io/badge/AI-Gemini--2.5--Flash-orange)](https://deepmind.google/technologies/gemini/)
 
 **VoterWise** is a production-grade Indian civic assistant designed to bridge the gap between authoritative government data and citizen engagement. By leveraging automated ingestion pipelines from the **Election Commission of India (ECI)** and **Chief Electoral Officer (CEO)** portals, VoterWise provides an authenticated, jurisdiction-aware, and accessibility-compliant roadmap to the democratic process.
 
