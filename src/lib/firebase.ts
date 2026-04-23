@@ -4,16 +4,18 @@ import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 
+const isTestMode = import.meta.env.MODE === 'test';
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || (isTestMode ? 'test-api-key' : ''),
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || (isTestMode ? 'test-auth-domain' : ''),
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || (isTestMode ? 'test-project-id' : ''),
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-export const isFirebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
+export const isFirebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId) || isTestMode;
 
 let app: FirebaseApp | undefined;
 let _auth: Auth | null = null;
