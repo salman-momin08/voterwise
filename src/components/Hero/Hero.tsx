@@ -1,28 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, Play, CheckCircle2, Sparkles, Shield } from 'lucide-react';
-import { useTranslate } from '../../hooks/useTranslate';
 import './Hero.css';
 
 interface HeroProps {
   onGetStarted: () => void;
-  currentLang: string;
 }
 
-const Hero: React.FC<HeroProps> = ({ onGetStarted, currentLang }) => {
-  // Translate title in segments to maintain Tri-color styling on "Adhikar"
-  const { translated: titlePart1 } = useTranslate("Your Vote is Your ", currentLang);
-  const { translated: adhikarText } = useTranslate("Adhikar", currentLang);
-  const { translated: titlePart2 } = useTranslate(". Make it Count.", currentLang);
-  
-  const { translated: description } = useTranslate(
-    "Demystify the Indian election process with VoterWise. Get personalized ECI deadlines, AI-powered civic guidance, and everything you need to lead your constituency.", 
-    currentLang
-  );
-  
-  const { translated: getStartedText } = useTranslate("Get Started", currentLang);
-  const { translated: watchText } = useTranslate("Watch How it Works", currentLang);
-
+const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
   return (
     <section className="hero-section" aria-label="Introduction">
       <div className="hero-grid container">
@@ -32,19 +17,19 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted, currentLang }) => {
           animate={{ opacity: 1, x: 0 }}
         >
           <h1 style={{ opacity: 1 }}>
-            {titlePart1}
-            <span className="adhikar-span">{adhikarText}</span>
-            {titlePart2}
+            Your Vote is Your <span className="adhikar-span">Adhikar</span>. Make it Count.
           </h1>
           
-          <p className="hero-description">{description}</p>
+          <p className="hero-description">
+            Demystify the Indian election process with VoterWise. Get personalized ECI deadlines, AI-powered civic guidance, and everything you need to lead your constituency.
+          </p>
 
           <div className="hero-actions">
             <button className="btn-primary" id="get-started-btn" onClick={onGetStarted}>
-              {getStartedText} <ChevronRight size={18} />
+              Get Started <ChevronRight size={18} />
             </button>
             <button className="btn-secondary" id="watch-btn">
-              <Play size={16} fill="currentColor" /> {watchText}
+              <Play size={16} fill="currentColor" /> Watch How it Works
             </button>
           </div>
 

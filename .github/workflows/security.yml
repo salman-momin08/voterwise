@@ -19,6 +19,6 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Run NPM Audit (High & Critical)
         run: npm audit --audit-level=high

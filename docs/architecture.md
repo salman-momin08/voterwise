@@ -29,4 +29,3 @@ The VoterWise platform follows a modular, lazy-loaded architecture to optimize i
 2. **Firebase Init**: `firebase.ts` runs synchronously to initialize App, Auth, Firestore, and App Check (if in production).
 3. **App Check**: Verifies the environment (ReCaptcha v3).
 4. **App Mount**: `App.tsx` mounts, checking session state and lazy loading the default route.
-1

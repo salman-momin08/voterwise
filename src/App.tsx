@@ -79,7 +79,6 @@ function App() {
       <ViewRouter 
         activeView={activeView} 
         setActiveView={setActiveView} 
-        currentLang={currentLang} 
       />
 
       {/* Floating Chat Assistant */}

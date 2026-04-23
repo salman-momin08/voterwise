@@ -3,12 +3,5 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ],
-  "include": [
-    "src",
-    "tests/setup.ts",
-    "tests/**/*.spec.ts",
-    "tests/e2e/**/*.spec.ts",
-    "playwright.config.ts"
   ]
 }

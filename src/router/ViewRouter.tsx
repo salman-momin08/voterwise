@@ -43,7 +43,6 @@ const ViewSkeleton = () => (
 interface ViewRouterProps {
   activeView: ViewType;
   setActiveView: (view: ViewType) => void;
-  currentLang: string;
 }
 
 const pageTransition = {
@@ -53,7 +52,7 @@ const pageTransition = {
   transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
 };
 
-const ViewRouter: React.FC<ViewRouterProps> = ({ activeView, setActiveView, currentLang }) => {
+const ViewRouter: React.FC<ViewRouterProps> = ({ activeView, setActiveView }) => {
   return (
     <AnimatePresence mode="wait">
       {activeView === 'home' && (
@@ -64,7 +63,7 @@ const ViewRouter: React.FC<ViewRouterProps> = ({ activeView, setActiveView, curr
             </div>
           </Suspense>
           
-          <Hero onGetStarted={() => setActiveView('navigator')} currentLang={currentLang} />
+          <Hero onGetStarted={() => setActiveView('navigator')} />
           
           <Suspense fallback={<ShowcaseSkeleton />}>
             <FeatureShowcase onNavigate={setActiveView} />
