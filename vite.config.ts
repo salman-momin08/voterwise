@@ -3,9 +3,16 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    {
+      name: 'html-transform',
+      transformIndexHtml(html) {
+        const apiKey = process.env.VITE_GOOGLE_MAPS_API_KEY || (mode === 'test' ? 'test-api-key' : '');
+        return html.replace(/%VITE_GOOGLE_MAPS_API_KEY%/g, apiKey);
+      },
+    },
     visualizer({
       filename: './dist/stats.html',
       open: false,
