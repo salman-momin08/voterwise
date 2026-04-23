@@ -32,9 +32,11 @@ firebase-debug.log*
 .runtimeconfig.json
 
 # TypeScript / Build
-dist
-dist-ssr
+dist/
+dist-ssr/
 *.tsbuildinfo
-coverage
-*.agents
-*tests
+coverage/
+.agents/
+tests/
+test-results/
+playwright-report/
