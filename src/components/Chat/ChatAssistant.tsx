@@ -114,7 +114,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ context, onClose }) => {
   };
 
   return (
-    <FocusTrap active={true}>
+    <FocusTrap focusTrapOptions={{ fallbackFocus: '#chat-input' }}>
       <div className="chat-container glass" role="complementary" aria-label="Election Assistant">
         <div className="chat-header">
           <div className="header-info">

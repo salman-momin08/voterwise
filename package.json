@@ -56,6 +56,9 @@
   "overrides": {
     "vite-plugin-pwa": {
       "vite": "$vite"
-    }
+    },
+    "serialize-javascript": "^7.0.2",
+    "uuid": "^11.0.0",
+    "@tootallnate/once": "^3.0.1"
   }
 }
