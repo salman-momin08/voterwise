@@ -138,6 +138,7 @@ export interface PollingStation {
   google_maps_url?: string;
   latitude?: number;
   longitude?: number;
+  booth_number?: string;
   source: SourceAttribution;
 }
 

@@ -1,6 +1,6 @@
 import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, setPersistence, browserLocalPersistence, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 
 const firebaseConfig = {
@@ -15,8 +15,8 @@ const firebaseConfig = {
 export const isFirebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
 
 let app: FirebaseApp | undefined;
-let _auth: any = null;
-let _db: any = null;
+let _auth: Auth | null = null;
+let _db: Firestore | null = null;
 
 if (isFirebaseConfigured) {
   app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -29,18 +29,25 @@ if (isFirebaseConfigured) {
   // Initialize App Check for Production Security
   if (import.meta.env.PROD) {
     initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_KEY || ''),
+      provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_KEY),
       isTokenAutoRefreshEnabled: true
     });
   }
 }
 
-export const getFirebaseAuth = () => _auth;
-export const getFirebaseDb = () => _db;
+export const getFirebaseAuth = () => {
+  if (!_auth) throw new Error("Firebase Auth not initialized. Check your environment variables.");
+  return _auth;
+};
+
+export const getFirebaseDb = () => {
+  if (!_db) throw new Error("Firestore not initialized. Check your environment variables.");
+  return _db;
+};
 
 // Compatibility bridge for legacy modules
-export const auth = _auth;
-export const db = _db;
+export const auth = _auth as Auth;
+export const db = _db as Firestore;
 
 export const initAnalytics = async () => {
   if (!app) return null;
@@ -54,7 +61,7 @@ export const initPerformance = async () => {
   const { getPerformance } = await import('firebase/performance');
   try {
     return getPerformance(app);
-  } catch (e) {
+  } catch {
     return null;
   }
 };

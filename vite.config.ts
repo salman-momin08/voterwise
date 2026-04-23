@@ -84,13 +84,12 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'firebase-core': ['firebase/app'],
-          'firebase-auth': ['firebase/auth'],
-          'firebase-db': ['firebase/firestore'],
-          'gemini': ['@google/generative-ai'],
-          'ui-core': ['framer-motion', 'lucide-react', 'react', 'react-dom'],
-          'idb': ['idb-keyval']
+        manualChunks: (id) => {
+          if (id.includes('firebase/app')) return 'firebase-core';
+          if (id.includes('firebase/auth')) return 'firebase-auth';
+          if (id.includes('firebase/firestore')) return 'firebase-db';
+          if (id.includes('@google/generative-ai')) return 'gemini';
+          if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('react')) return 'ui-core';
         },
       },
     },

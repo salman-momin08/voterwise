@@ -41,7 +41,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, []);
 
   const handleLogin = async () => {
@@ -64,33 +64,33 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
     setIsMenuOpen(false);
   };
 
-  const currentLangLabel = LANGUAGES.find(l => l.code === currentLang)?.label || 'English';
+  const currentLangLabel = LANGUAGES.find(l => l.code === currentLang)?.label ?? 'English';
 
   return (
     <nav className="navbar glass" role="navigation" aria-label="Main Navigation">
       <div className="nav-container">
-        <div className="nav-logo" onClick={() => navTo('home')} style={{ cursor: 'pointer' }}>
+        <div className="nav-logo" onClick={() => { navTo('home'); }} style={{ cursor: 'pointer' }}>
           <Vote className="logo-icon" size={26} />
           <span className="logo-text">Voter<span>Wise</span></span>
         </div>
 
         <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
-          <button className={`nav-item ${activeView === 'navigator' ? 'active' : ''}`} onClick={() => navTo('navigator')}>
+          <button className={`nav-item ${activeView === 'navigator' ? 'active' : ''}`} onClick={() => { navTo('navigator'); }}>
             <Map size={14} /> Roadmap
           </button>
-          <button className={`nav-item ${activeView === 'timeline' ? 'active' : ''}`} onClick={() => navTo('timeline')}>
+          <button className={`nav-item ${activeView === 'timeline' ? 'active' : ''}`} onClick={() => { navTo('timeline'); }}>
             <Clock size={14} /> Timeline
           </button>
-          <button className={`nav-item ${activeView === 'ballot' ? 'active' : ''}`} onClick={() => navTo('ballot')}>
+          <button className={`nav-item ${activeView === 'ballot' ? 'active' : ''}`} onClick={() => { navTo('ballot'); }}>
             <FileCheck size={14} /> Ballot
           </button>
-          <button className={`nav-item ${activeView === 'waittime' ? 'active' : ''}`} onClick={() => navTo('waittime')}>
+          <button className={`nav-item ${activeView === 'waittime' ? 'active' : ''}`} onClick={() => { navTo('waittime'); }}>
             <BarChart3 size={14} /> Live Wait
           </button>
-          <button className={`nav-item ${activeView === 'quiz' ? 'active' : ''}`} onClick={() => navTo('quiz')}>
+          <button className={`nav-item ${activeView === 'quiz' ? 'active' : ''}`} onClick={() => { navTo('quiz'); }}>
             <BookOpen size={14} /> Quiz
           </button>
-          <button className={`nav-item ${activeView === 'explorer' ? 'active' : ''}`} onClick={() => navTo('explorer')}>
+          <button className={`nav-item ${activeView === 'explorer' ? 'active' : ''}`} onClick={() => { navTo('explorer'); }}>
             <Globe size={14} /> Explorer
           </button>
 
@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
           <div className="lang-selector" ref={langRef}>
             <button
               className="lang-toggle"
-              onClick={() => setIsLangOpen(!isLangOpen)}
+              onClick={() => { setIsLangOpen(!isLangOpen); }}
               aria-expanded={isLangOpen}
               aria-label="Select language"
             >
@@ -115,8 +115,18 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
                     key={lang.code}
                     className={`lang-option ${lang.code === currentLang ? 'active' : ''}`}
                     onClick={() => {
-                      onLanguageChange(lang.code);
+                      const langCode = lang.code;
+                      // Set Google Translate cookie
+                      document.cookie = `googtrans=/en/${langCode}; path=/`;
+                      document.cookie = `googtrans=/en/${langCode}; path=/; domain=.${window.location.hostname}`;
+                      
+                      onLanguageChange(langCode);
                       setIsLangOpen(false);
+                      
+                      // Small delay then reload to ensure Google Translate picks up the cookie
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 100);
                     }}
                   >
                     {lang.label}
@@ -134,15 +144,15 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
             {user ? (
               <div className="user-profile">
                 <div className="user-info">
-                  <img src={user.photoURL || ''} alt="" className="avatar" />
-                  <span className="username">{user.displayName}</span>
+                  <img src={user.photoURL ?? ''} alt="" className="avatar" />
+                  <span className="username">{user.displayName ?? 'Voter'}</span>
                 </div>
-                <button onClick={handleLogout} className="logout-btn" aria-label="Log out">
+                <button onClick={() => { void handleLogout(); }} className="logout-btn" aria-label="Log out">
                   <LogOut size={18} />
                 </button>
               </div>
             ) : (
-              <button onClick={handleLogin} className="login-btn" id="login-btn">
+              <button onClick={() => { void handleLogin(); }} className="login-btn" id="login-btn">
                 Join Community
               </button>
             )}
@@ -151,7 +161,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeView, onNavigate, onToggleAssista
 
         <button 
           className="menu-toggle" 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => { setIsMenuOpen(!isMenuOpen); }}
           aria-expanded={isMenuOpen}
           aria-label="Toggle navigation menu"
         >

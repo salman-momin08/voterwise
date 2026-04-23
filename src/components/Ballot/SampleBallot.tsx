@@ -91,12 +91,28 @@ const SampleBallot: React.FC = () => {
     const q = collection(db, 'members');
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ConstituencyMember));
+      const data = snapshot.docs.map(doc => {
+        const rawData = doc.data();
+        return {
+          id: doc.id,
+          name: String(rawData.name ?? ''),
+          party: String(rawData.party ?? ''),
+          role: (rawData.role === 'MP' ? 'MP' : 'MLA'),
+          constituency_id: String(rawData.constituency_id ?? ''),
+          state_code: String(rawData.state_code ?? ''),
+          official_profile_url: String(rawData.official_profile_url ?? ''),
+          education: String(rawData.education ?? ''),
+          criminal_cases: Number(rawData.criminal_cases ?? 0),
+          assets: String(rawData.assets ?? ''),
+          affidavit_url: String(rawData.affidavit_url ?? ''),
+          source: (rawData.source as SourceAttribution) || INITIAL_CANDIDATES[0].source
+        };
+      });
       setCandidates(data);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); };
   }, []);
 
   if (loading) return <div className="ballot-skeleton glass animate-pulse" style={{ height: '600px' }}></div>;
@@ -114,7 +130,7 @@ const SampleBallot: React.FC = () => {
               <button 
                 key={candidate.id}
                 className={`candidate-card ${selectedCandidate?.id === candidate.id ? 'active' : ''}`}
-                onClick={() => setSelectedCandidate(candidate)}
+                onClick={() => { setSelectedCandidate(candidate); }}
               >
                 <div className="candidate-avatar">
                   <User size={20} />

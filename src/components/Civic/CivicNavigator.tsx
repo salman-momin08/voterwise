@@ -36,7 +36,7 @@ const CivicNavigator: React.FC = () => {
   const [state, setState] = useState<WorkflowState>(() => {
     const saved = sessionStorage.getItem('voterwise_navigator_state');
     return saved ? JSON.parse(saved) : {
-      current_step: 'eligibility' as WorkflowStepId,
+      current_step: 'eligibility',
       completed_steps: [] as WorkflowStepId[],
     };
   });
@@ -57,7 +57,7 @@ const CivicNavigator: React.FC = () => {
       setWarning(null);
     } else {
       setWarning(`Please finish the ${STEPS[targetIndex - 1].toUpperCase()} section before moving to ${targetStep.toUpperCase()}.`);
-      setTimeout(() => setWarning(null), 3000);
+      setTimeout(() => { setWarning(null); }, 3000);
     }
   };
 
@@ -87,7 +87,7 @@ const CivicNavigator: React.FC = () => {
             onEligible={(res) => {
               setState(prev => ({ ...prev, eligibility_result: res }));
               if (res.is_eligible) {
-                setTimeout(() => nextStep('constituency'), 1500);
+                setTimeout(() => { nextStep('constituency'); }, 1500);
               }
             }} 
           />
@@ -114,7 +114,7 @@ const CivicNavigator: React.FC = () => {
             <div className="option-group" style={{ marginTop: 'var(--space-xl)' }}>
               <div 
                 className="option-card glass" 
-                onClick={() => nextStep('polling_lookup')}
+                onClick={() => { nextStep('polling_lookup'); }}
                 style={{ padding: 'var(--space-2xl)' }}
               >
                 <div className="action-icon-wrapper" style={{ margin: '0 auto var(--space-md)', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)' }}>
@@ -126,7 +126,7 @@ const CivicNavigator: React.FC = () => {
               
               <div 
                 className="option-card glass" 
-                onClick={() => nextStep('epic_registration')}
+                onClick={() => { nextStep('epic_registration'); }}
                 style={{ padding: 'var(--space-2xl)' }}
               >
                 <div className="action-icon-wrapper" style={{ margin: '0 auto var(--space-md)', background: 'rgba(255, 153, 51, 0.1)' }}>
@@ -146,7 +146,7 @@ const CivicNavigator: React.FC = () => {
         return (
           <PollingLookup 
             constituencyId={state.constituency?.id} 
-            onNext={() => nextStep('election_schedule')}
+            onNext={() => { nextStep('election_schedule'); }}
           />
         );
 
@@ -223,13 +223,13 @@ const CivicNavigator: React.FC = () => {
         )}
 
         {state.current_step === 'election_schedule' && (
-          <button className="btn-primary" onClick={() => nextStep('polling_checklist')}>
+          <button className="btn-primary" onClick={() => { nextStep('polling_checklist'); }}>
             Save & Continue to Checklist <ChevronRight size={18} />
           </button>
         )}
 
         {state.current_step === 'polling_checklist' && (
-          <button className="btn-primary" onClick={() => nextStep('status')}>
+          <button className="btn-primary" onClick={() => { nextStep('status'); }}>
             Complete Journey <ChevronRight size={18} />
           </button>
         )}

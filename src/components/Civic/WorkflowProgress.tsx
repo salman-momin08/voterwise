@@ -38,7 +38,7 @@ const WorkflowProgress: React.FC<WorkflowProgressProps> = ({ currentStep, comple
           <div 
             key={step.id} 
             className={`progress-step ${isActive ? 'active' : ''} ${isVisited ? 'completed' : ''}`}
-            onClick={() => onStepClick(step.id)}
+            onClick={() => { onStepClick(step.id); }}
             style={{ cursor: 'pointer' }}
           >
             <div className="step-dot">

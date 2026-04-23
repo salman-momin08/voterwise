@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getFirebaseDb, getFirebaseAuth } from '../../lib/firebase';
-import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, addDoc, serverTimestamp, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Clock, Users, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './WaitTimeMap.css';
@@ -9,11 +9,14 @@ interface WaitTimeReport {
   id: string;
   constituency: string;
   timeRange: string;
-  timestamp: any;
+  timestamp: Timestamp | null;
   userId: string;
 }
 
-const LOCATION_DATA = {
+type StateData = Record<string, string[]>;
+type LocationStructure = Record<string, StateData>;
+
+const LOCATION_DATA: LocationStructure = {
   'Delhi': {
     'New Delhi': ['Connaught Place', 'Chanakyapuri', 'Delhi Cantt'],
     'South Delhi': ['Saket', 'Hauz Khas', 'Mehrauli'],
@@ -33,18 +36,35 @@ const LOCATION_DATA = {
 
 const WaitTimeMap: React.FC = () => {
   const [reports, setReports] = useState<WaitTimeReport[]>([]);
-  const [selectedState, setSelectedState] = useState('Delhi');
+  const [selectedState, setSelectedState] = useState<keyof typeof LOCATION_DATA>('Delhi');
   const [selectedDistrict, setSelectedDistrict] = useState('New Delhi');
   const [selectedTaluk, setSelectedTaluk] = useState('Connaught Place');
   const [isReporting, setIsReporting] = useState(false);
   const [lastReported, setLastReported] = useState<number | null>(null);
+  const [isCooldownActive, setIsCooldownActive] = useState(false);
 
   const states = Object.keys(LOCATION_DATA);
-  const districts = Object.keys(LOCATION_DATA[selectedState as keyof typeof LOCATION_DATA] || {});
-  const taluks = (LOCATION_DATA[selectedState as keyof typeof LOCATION_DATA] as any)?.[selectedDistrict] || [];
+  const districts = Object.keys(LOCATION_DATA[selectedState]);
+  const taluks = LOCATION_DATA[selectedState][selectedDistrict] || [];
+
+  useEffect(() => {
+    if (!lastReported) return;
+    
+    const checkCooldown = () => {
+      const active = Date.now() - lastReported < 300000;
+      setIsCooldownActive(active);
+      return active;
+    };
+
+    if (checkCooldown()) {
+      const timer = setInterval(checkCooldown, 10000);
+      return () => { clearInterval(timer); };
+    }
+  }, [lastReported]);
 
   useEffect(() => {
     const db = getFirebaseDb();
+
     const q = query(
       collection(db, 'wait-times-india'),
       where('constituency', '==', selectedTaluk),
@@ -53,22 +73,32 @@ const WaitTimeMap: React.FC = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as WaitTimeReport));
+      const data = snapshot.docs.map(doc => {
+        const rawData = doc.data();
+        return {
+          id: doc.id,
+          constituency: String(rawData.constituency ?? ''),
+          timeRange: String(rawData.timeRange ?? ''),
+          timestamp: rawData.timestamp as Timestamp | null,
+          userId: String(rawData.userId ?? ''),
+        };
+      });
       setReports(data);
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); };
   }, [selectedTaluk]);
 
   const submitReport = async (range: string) => {
     const auth = getFirebaseAuth();
-    if (!auth.currentUser) {
+    if (!auth?.currentUser) {
       alert("Please join the community to report live wait times.");
       return;
     }
 
     try {
       const db = getFirebaseDb();
+      
       await addDoc(collection(db, 'wait-times-india'), {
         constituency: selectedTaluk,
         district: selectedDistrict,
@@ -77,7 +107,8 @@ const WaitTimeMap: React.FC = () => {
         userId: auth.currentUser.uid,
         timestamp: serverTimestamp()
       });
-      setLastReported(Date.now());
+      const now = Date.now();
+      setLastReported(now);
       setIsReporting(false);
     } catch (error) {
       console.error("Report failed:", error);
@@ -107,10 +138,11 @@ const WaitTimeMap: React.FC = () => {
           <div className="select-group">
             <label>State</label>
             <select value={selectedState} onChange={(e) => {
-              setSelectedState(e.target.value);
-              const firstDist = Object.keys(LOCATION_DATA[e.target.value as keyof typeof LOCATION_DATA])[0];
+              const newState = e.target.value;
+              setSelectedState(newState);
+              const firstDist = Object.keys(LOCATION_DATA[newState])[0] || '';
               setSelectedDistrict(firstDist);
-              setSelectedTaluk((LOCATION_DATA[e.target.value as keyof typeof LOCATION_DATA] as any)[firstDist][0]);
+              setSelectedTaluk(LOCATION_DATA[newState][firstDist][0] || '');
             }}>
               {states.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -119,8 +151,9 @@ const WaitTimeMap: React.FC = () => {
           <div className="select-group">
             <label>District</label>
             <select value={selectedDistrict} onChange={(e) => {
-              setSelectedDistrict(e.target.value);
-              setSelectedTaluk((LOCATION_DATA[selectedState as keyof typeof LOCATION_DATA] as any)[e.target.value][0]);
+              const newDist = e.target.value;
+              setSelectedDistrict(newDist);
+              setSelectedTaluk(LOCATION_DATA[selectedState][newDist][0] || '');
             }}>
               {districts.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
@@ -128,7 +161,7 @@ const WaitTimeMap: React.FC = () => {
 
           <div className="select-group">
             <label>Taluk / Zone</label>
-            <select value={selectedTaluk} onChange={(e) => setSelectedTaluk(e.target.value)}>
+            <select value={selectedTaluk} onChange={(e) => { setSelectedTaluk(e.target.value); }}>
               {taluks.map((t: string) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
@@ -145,11 +178,11 @@ const WaitTimeMap: React.FC = () => {
           {!isReporting ? (
             <button 
               className="report-btn" 
-              onClick={() => setIsReporting(true)}
-              disabled={!!lastReported && Date.now() - lastReported < 300000}
+              onClick={() => { setIsReporting(true); }}
+              disabled={isCooldownActive}
             >
               <Users size={18} /> 
-              {lastReported && Date.now() - lastReported < 300000 ? "Shukriya! Reported Recently" : "Report Live Wait Time"}
+              {isCooldownActive ? "Shukriya! Reported Recently" : "Report Live Wait Time"}
             </button>
           ) : (
             <motion.div 
@@ -160,10 +193,10 @@ const WaitTimeMap: React.FC = () => {
               <p>Booth pe kitna intezar hai?</p>
               <div className="option-grid">
                 {['< 15 mins', '15-30 mins', '30-60 mins', '1+ hour'].map(range => (
-                  <button key={range} onClick={() => submitReport(range)}>{range}</button>
+                  <button key={range} onClick={() => { void submitReport(range); }}>{range}</button>
                 ))}
               </div>
-              <button className="cancel-link" onClick={() => setIsReporting(false)}>Wapas jaye</button>
+              <button className="cancel-link" onClick={() => { setIsReporting(false); }}>Wapas jaye</button>
             </motion.div>
           )}
         </div>
@@ -177,7 +210,7 @@ const WaitTimeMap: React.FC = () => {
               <div className="dot"></div>
               <span>{r.timeRange}</span>
               <span className="timestamp">
-                {r.timestamp?.toDate() ? new Date(r.timestamp.toDate()).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "Just now"}
+                {r.timestamp ? r.timestamp.toDate().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "Just now"}
               </span>
             </div>
           ))}

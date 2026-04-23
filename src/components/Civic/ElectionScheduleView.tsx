@@ -34,12 +34,12 @@ const ElectionScheduleView: React.FC<ElectionScheduleViewProps> = ({ constituenc
 
   if (loading) return <div className="loading-spinner">Synchronizing ECI Dates...</div>;
 
-  const status = detectElectionLifecycle(election);
+  const status = election ? detectElectionLifecycle(election) : 'SCHEDULE_AWAITED';
 
   return (
     <div className="step-container animate-fade-in">
       <div className="wizard-header">
-        <h2 className="section-title">Your Election Schedule</h2>
+        <h2 className="section-title">Election Schedule</h2>
         <p className="section-subtitle">Grounded in official ECI Gazetted dates for your region.</p>
       </div>
 
@@ -72,7 +72,7 @@ const ElectionScheduleView: React.FC<ElectionScheduleViewProps> = ({ constituenc
               </div>
               <div>
                 <label>Polling Date</label>
-                <span>{new Date(election.phases[0]?.polling_date || '').toLocaleDateString('en-IN', { dateStyle: 'long' })}</span>
+                <span>{election.phases?.[0] ? new Date(election.phases[0].polling_date).toLocaleDateString('en-IN', { dateStyle: 'long' }) : 'Date Awaited'}</span>
               </div>
             </div>
 

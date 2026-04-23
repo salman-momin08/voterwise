@@ -4,11 +4,12 @@ import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { MapPin, Users, Globe, Building2, Search, ExternalLink, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { IndianState, District, ConstituencyMember } from '../../types/civic';
+import { useCivicStore } from '../../lib/store';
 import TrustIndicator from './TrustIndicator';
 import './ConstituencyExplorer.css';
 
 const ConstituencyExplorer: React.FC = () => {
-  const [states, setStates] = useState<IndianState[]>([]);
+  const { states, setStates } = useCivicStore();
   const [districts, setDistricts] = useState<District[]>([]);
   const [members, setMembers] = useState<ConstituencyMember[]>([]);
   
@@ -16,18 +17,25 @@ const ConstituencyExplorer: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  // Fetch all states on mount
+  // Fetch all states on mount if not already in store
   useEffect(() => {
+    if (states.length > 0) return;
+
     const fetchStates = async () => {
       setLoading(true);
-      const db = getFirebaseDb();
-      const snapshot = await getDocs(collection(db, 'india'));
-      const data = snapshot.docs.map(doc => doc.data() as IndianState);
-      setStates(data);
-      setLoading(false);
+      try {
+        const db = getFirebaseDb();
+        const snapshot = await getDocs(collection(db, 'india'));
+        const data = snapshot.docs.map(doc => doc.data() as IndianState);
+        setStates(data);
+      } catch (error) {
+        console.error('Failed to fetch states:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchStates();
-  }, []);
+    void fetchStates();
+  }, [states.length, setStates]);
 
   // Fetch districts when state changes
   useEffect(() => {
@@ -36,12 +44,16 @@ const ConstituencyExplorer: React.FC = () => {
       return;
     }
     const fetchDistricts = async () => {
-      const db = getFirebaseDb();
-      const snapshot = await getDocs(collection(db, 'india', selectedState, 'districts'));
-      const data = snapshot.docs.map(doc => doc.data() as District);
-      setDistricts(data);
+      try {
+        const db = getFirebaseDb();
+        const snapshot = await getDocs(collection(db, 'india', selectedState, 'districts'));
+        const data = snapshot.docs.map(doc => doc.data() as District);
+        setDistricts(data);
+      } catch (error) {
+        console.error('Failed to fetch districts:', error);
+      }
     };
-    fetchDistricts();
+    void fetchDistricts();
   }, [selectedState]);
 
   // Fetch members when state changes (Real-time)
@@ -56,23 +68,27 @@ const ConstituencyExplorer: React.FC = () => {
       const allMembers = snapshot.docs.map(doc => doc.data() as ConstituencyMember);
       const filtered = allMembers.filter(m => m.state_code === selectedState);
       setMembers(filtered);
+    }, (error) => {
+      console.error('Members subscription error:', error);
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); };
   }, [selectedState]);
 
   const refreshData = () => {
     setLoading(true);
-    // Trigger re-fetches by resetting state
     setSelectedState('');
     setSelectedDistrict('');
     const fetchStates = async () => {
-      const db = getFirebaseDb();
-      const snapshot = await getDocs(collection(db, 'india'));
-      setStates(snapshot.docs.map(doc => doc.data() as IndianState));
-      setLoading(false);
+      try {
+        const db = getFirebaseDb();
+        const snapshot = await getDocs(collection(db, 'india'));
+        setStates(snapshot.docs.map(doc => doc.data() as IndianState));
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchStates();
+    void fetchStates();
   };
 
   return (
@@ -100,7 +116,7 @@ const ConstituencyExplorer: React.FC = () => {
           <label><Building2 size={14} /> Select District / City</label>
           <select 
             value={selectedDistrict} 
-            onChange={(e) => setSelectedDistrict(e.target.value)}
+            onChange={(e) => { setSelectedDistrict(e.target.value); }}
             disabled={!selectedState}
           >
             <option value="">All Districts</option>

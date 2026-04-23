@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-declare const google: any;
+// Global google variable is typed via @types/google.maps in tsconfig
 
 interface GoogleMapProps {
   lat: number;
@@ -20,46 +20,37 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ lat, lng, title }) => {
       return;
     }
 
-    const position = { lat, lng };
-    const map = new google.maps.Map(mapRef.current, {
-      center: position,
-      zoom: 16,
-      disableDefaultUI: true,
-      zoomControl: true,
-      styles: [
-        {
-          "elementType": "geometry",
-          "stylers": [{ "color": "#212121" }]
-        },
-        {
-          "elementType": "labels.icon",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "elementType": "labels.text.fill",
-          "stylers": [{ "color": "#757575" }]
-        },
-        {
-          "elementType": "labels.text.stroke",
-          "stylers": [{ "color": "#212121" }]
-        }
-      ]
-    });
+    const initMap = async () => {
+      const position = { lat, lng };
 
-    new google.maps.Marker({
-      position,
-      map,
-      title,
-      animation: google.maps.Animation.DROP
-    });
+      // Request libraries
+      const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+      const map = new Map(mapRef.current!, {
+        center: position,
+        zoom: 16,
+        disableDefaultUI: true,
+        zoomControl: true,
+        mapId: 'DEMO_MAP_ID', // Required for Advanced Markers
+      });
+
+      new AdvancedMarkerElement({
+        position,
+        map,
+        title,
+      });
+    };
+
+    initMap();
   }, [lat, lng, title]);
 
   return (
-    <div 
-      ref={mapRef} 
-      style={{ 
-        width: '100%', 
-        height: '300px', 
+    <div
+      ref={mapRef}
+      style={{
+        width: '100%',
+        height: '300px',
         borderRadius: '12px',
         border: '1px solid rgba(255, 255, 255, 0.1)',
         marginTop: 'var(--space-md)',
@@ -71,7 +62,7 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ lat, lng, title }) => {
         gap: 'var(--space-sm)',
         color: 'var(--text-tertiary)',
         fontSize: '0.85rem'
-      }} 
+      }}
       className="google-map-container"
     >
       {typeof google === 'undefined' && (

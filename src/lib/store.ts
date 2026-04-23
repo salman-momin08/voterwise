@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { IndianState, Election, RegistrationCycle, IndianStateSchema, ElectionSchema } from '../types/civic';
+import type { IndianState, Election, RegistrationCycle } from '../types/civic';
 
 interface CivicStore {
   states: IndianState[];
@@ -19,14 +19,14 @@ export const useCivicStore = create<CivicStore>((set) => ({
   activeCycle: null,
   lastUpdated: null,
 
-  setStates: (states) => set({ states, lastUpdated: Date.now() }),
-  setCurrentElection: (election) => set({ currentElection: election, lastUpdated: Date.now() }),
-  setActiveCycle: (cycle) => set({ activeCycle: cycle, lastUpdated: Date.now() }),
+  setStates: (states) => { set({ states, lastUpdated: Date.now() }); },
+  setCurrentElection: (election) => { set({ currentElection: election, lastUpdated: Date.now() }); },
+  setActiveCycle: (cycle) => { set({ activeCycle: cycle, lastUpdated: Date.now() }); },
   
-  clearCache: () => set({ 
+  clearCache: () => { set({ 
     states: [], 
     currentElection: null, 
     activeCycle: null, 
     lastUpdated: null 
-  }),
+  }); },
 }));

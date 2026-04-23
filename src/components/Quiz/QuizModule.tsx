@@ -88,14 +88,14 @@ const QuizModule: React.FC = () => {
                 <div className="quiz-options">
                   <button 
                     className={`opt-btn fact ${userAnswer === true ? 'selected' : ''}`}
-                    onClick={() => handleAnswer(true)}
+                    onClick={() => { handleAnswer(true); }}
                     disabled={userAnswer !== null}
                   >
                     Fact
                   </button>
                   <button 
                     className={`opt-btn myth ${userAnswer === false ? 'selected' : ''}`}
-                    onClick={() => handleAnswer(false)}
+                    onClick={() => { handleAnswer(false); }}
                     disabled={userAnswer !== null}
                   >
                     Myth

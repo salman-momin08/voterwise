@@ -36,7 +36,7 @@ const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ onEligible }) =
 
     setResult(groundedResult);
     if (groundedResult.is_eligible) {
-      setTimeout(() => onEligible(groundedResult), 2000);
+      setTimeout(() => { onEligible(groundedResult); }, 2000);
     }
   };
 
@@ -64,7 +64,7 @@ const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ onEligible }) =
               className="input-primary"
               placeholder="e.g. 18"
               value={age}
-              onChange={(e) => setAge(e.target.value)}
+              onChange={(e) => { setAge(e.target.value); }}
             />
           </div>
 
@@ -75,7 +75,7 @@ const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ onEligible }) =
             <select 
               className="input-primary"
               value={citizenship}
-              onChange={(e) => setCitizenship(e.target.value)}
+              onChange={(e) => { setCitizenship(e.target.value); }}
             >
               <option value="India">Indian Citizen</option>
               <option value="Other">Other</option>

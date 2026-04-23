@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import type { Election } from '../../types/civic';
+import type { Election, SourceAttribution } from '../../types/civic';
 import { detectElectionLifecycle } from '../../engines/lifecycle';
 import TrustIndicator from '../Civic/TrustIndicator';
 import './Timeline.css';
@@ -12,17 +12,41 @@ const ElectionTimeline: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     const db = getFirebaseDb();
     const q = query(collection(db, 'schedule'), orderBy('date', 'asc'));
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map(doc => doc.data() as Election);
+      const list = snapshot.docs.map(doc => {
+        const data = doc.data();
+        const rawPhases = (data.phases as Array<Record<string, unknown>>) ?? [];
+        
+        return {
+          id: doc.id,
+          title: String(data.title ?? ''),
+          type: (data.type ?? 'general') as 'general' | 'assembly' | 'bye-election',
+          year: Number(data.year ?? 0),
+          results_declared: Boolean(data.results_declared ?? false),
+          source: data.source as SourceAttribution,
+          phases: rawPhases.map(p => ({
+            id: String(p.id ?? ''),
+            phase_number: Number(p.phase_number ?? 0),
+            states: (p.states as string[] ?? []),
+            constituencies: (p.constituencies as string[] ?? []),
+            nomination_start: String(p.nomination_start ?? ''),
+            nomination_end: String(p.nomination_end ?? ''),
+            scrutiny_date: String(p.scrutiny_date ?? ''),
+            withdrawal_date: String(p.withdrawal_date ?? ''),
+            polling_date: String(p.polling_date ?? ''),
+            counting_date: String(p.counting_date ?? ''),
+            source: p.source as SourceAttribution
+          }))
+        } as Election;
+      });
       setElections(list);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); };
   }, []);
 
   if (loading) return <div className="timeline-skeleton animate-pulse glass" style={{ height: '400px', borderRadius: 'var(--radius-xl)' }}></div>;
@@ -54,15 +78,15 @@ const ElectionTimeline: React.FC = () => {
                 {status.replace(/_/g, ' ')}
               </span>
             </div>
-            <h3>{activeElection?.title || 'General Election Roadmap'}</h3>
+            <h3>{activeElection.title || 'General Election Roadmap'}</h3>
           </div>
 
           <div className="timeline-items">
-            {activeElection?.phases?.map((phase, idx) => (
+            {activeElection.phases?.map((phase, idx) => (
               <div key={phase.id} className="timeline-item">
                 <div className="item-marker">
                   <div className="marker-dot"></div>
-                  {idx < activeElection.phases!.length - 1 && <div className="marker-line"></div>}
+                  {idx < (activeElection.phases?.length ?? 0) - 1 && <div className="marker-line"></div>}
                 </div>
                 <div className="item-content">
                   <div className="item-date">Phase {phase.phase_number} • {new Date(phase.polling_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>

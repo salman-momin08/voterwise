@@ -15,7 +15,7 @@ export function useTranslate(text: string, targetLang: string) {
       }
 
       setLoading(true);
-      const result = await translateText(text, targetLang);
+      const result = await translateText(text);
       
       if (isMounted) {
         setTranslated(result);

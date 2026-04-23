@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Map, Clock, Vote, Calendar, Navigation2, Search } from 'lucide-react';
+import { Clock, Vote, Calendar, Navigation2, Search } from 'lucide-react';
 import './FeatureShowcase.css';
 
 interface FeatureShowcaseProps {
@@ -66,7 +66,7 @@ const FeatureShowcase: React.FC<FeatureShowcaseProps> = ({ onNavigate }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            onClick={() => onNavigate(feature.id)}
+            onClick={() => { onNavigate(feature.id as any); }}
           >
             <div className="feature-icon-wrapper" style={{ backgroundColor: `${feature.color}15`, color: feature.color }}>
               <feature.icon size={24} />

@@ -1,4 +1,4 @@
-import type { Election, ElectionLifecycleStatus } from '../types/civic';
+import type { Election, ElectionLifecycleStatus, RegistrationCycle } from '../types/civic';
 
 /**
  * Election Lifecycle Detection Engine
@@ -24,7 +24,7 @@ import type { Election, ElectionLifecycleStatus } from '../types/civic';
  * - completed
  */
 export const detectElectionLifecycle = (election: Election | null): ElectionLifecycleStatus => {
-  if (!election || !election.phases || election.phases.length === 0) {
+  if (!election?.phases || election.phases.length === 0) {
     // If no election schedule exists in cache, check if there's an active revision cycle
     // (In production, this would check the /revision_cycles collection)
     return 'schedule_not_announced';
@@ -73,8 +73,8 @@ export const detectElectionLifecycle = (election: Election | null): ElectionLife
 /**
  * Registration Revision Cycle Awareness Engine
  */
-export const detectRevisionCycleStatus = (currentCycle: any | null): string => {
-  if (!currentCycle || !currentCycle.is_active) {
+export const detectRevisionCycleStatus = (currentCycle: RegistrationCycle | null): string => {
+  if (!currentCycle?.is_active) {
     return 'continuous_update_phase';
   }
   

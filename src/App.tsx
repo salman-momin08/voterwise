@@ -55,7 +55,7 @@ const ViewSkeleton = () => (
 function App() {
   const [activeView, setActiveView] = useState<ViewType>(() => {
     const saved = sessionStorage.getItem('voterwise_active_view');
-    return (saved as ViewType) || 'home';
+    return (saved as ViewType) ?? 'home';
   });
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
@@ -70,17 +70,13 @@ function App() {
 
   useEffect(() => {
     const auth = getFirebaseAuth();
-    if (!auth) {
-      console.warn("🔐 Auth: System not ready yet.");
-      return;
-    }
 
 
     getRedirectResult(auth).then((result) => {
       if (result?.user) {
         setUser(result.user);
       }
-    }).catch(err => {
+    }).catch((err: unknown) => {
       console.error("Auth Error:", err);
     });
 
@@ -120,7 +116,7 @@ function App() {
       <Navbar 
         activeView={activeView} 
         onNavigate={setActiveView} 
-        onToggleAssistant={() => setIsAssistantOpen(!isAssistantOpen)} 
+        onToggleAssistant={() => { setIsAssistantOpen(!isAssistantOpen); }} 
         currentLang={currentLang}
         onLanguageChange={setCurrentLang}
         user={user}
@@ -136,7 +132,7 @@ function App() {
                 </div>
               </Suspense>
               
-              <Hero onGetStarted={() => setActiveView('navigator')} currentLang={currentLang} />
+              <Hero onGetStarted={() => { setActiveView('navigator'); }} currentLang={currentLang} />
               
               <Suspense fallback={<ShowcaseSkeleton />}>
                 <FeatureShowcase onNavigate={setActiveView} />
@@ -150,7 +146,7 @@ function App() {
               {activeView === 'navigator' && (
                 <motion.div key="navigator" {...pageTransition} className="container view-container">
                   <div className="view-header">
-                    <h2>Civic Navigator</h2>
+                    <h1>Civic Navigator</h1>
                     <p>Follow the authoritative roadmap to voter registration and polling.</p>
                   </div>
                   <CivicNavigator />
@@ -160,7 +156,7 @@ function App() {
               {activeView === 'timeline' && (
                 <motion.div key="timeline" {...pageTransition} className="container view-container">
                   <div className="view-header">
-                    <h2>Dynamic Election Roadmap</h2>
+                    <h1>Dynamic Election Roadmap</h1>
                     <p>Real-time updates on polling schedules across India.</p>
                   </div>
                   <ElectionTimeline />
@@ -170,7 +166,7 @@ function App() {
               {activeView === 'ballot' && (
                 <motion.div key="ballot" {...pageTransition} className="container view-container">
                   <div className="view-header">
-                    <h2>Interactive Ballot</h2>
+                    <h1>Interactive Ballot</h1>
                     <p>Explore candidates in your constituency with AI-powered insights.</p>
                   </div>
                   <SampleBallot />
@@ -180,7 +176,7 @@ function App() {
               {activeView === 'waittime' && (
                 <motion.div key="waittime" {...pageTransition} className="container view-container">
                   <div className="view-header">
-                    <h2>Live Wait Times</h2>
+                    <h1>Live Wait Times</h1>
                     <p>Crowdsourced booth wait estimates for your constituency.</p>
                   </div>
                   <WaitTimeMap />
@@ -190,7 +186,7 @@ function App() {
               {activeView === 'quiz' && (
                 <motion.div key="quiz" {...pageTransition} className="container view-container">
                   <div className="view-header">
-                    <h2>Voter Knowledge Quiz</h2>
+                    <h1>Voter Knowledge Quiz</h1>
                     <p>Test and strengthen your civic awareness.</p>
                   </div>
                   <CivicAcademy />
@@ -208,11 +204,20 @@ function App() {
       </main>
 
       {/* Floating Chat Assistant */}
-      <Suspense fallback={null}>
-        <div className={`floating-assistant ${isAssistantOpen ? 'open' : ''}`}>
-          <ChatAssistant context={ragContext || undefined} onClose={() => setIsAssistantOpen(false)} />
-        </div>
-      </Suspense>
+      <AnimatePresence>
+        {isAssistantOpen && (
+          <Suspense fallback={null}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="floating-assistant open"
+            >
+              <ChatAssistant context={ragContext ?? undefined} onClose={() => { setIsAssistantOpen(false); }} />
+            </motion.div>
+          </Suspense>
+        )}
+      </AnimatePresence>
 
       <footer className="footer glass">
         <div className="container">

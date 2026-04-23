@@ -8,10 +8,11 @@ import type { SourceAttribution } from '../types/civic';
  * - Rejects data lacking required source fields
  * - Prevents speculative or hallucinated deadlines
  */
-export const validateCivicSource = (data: any): boolean => {
+export const validateCivicSource = (data: unknown): data is { source: SourceAttribution } => {
   if (!data || typeof data !== 'object') return false;
   
-  const source = data.source as SourceAttribution;
+  const potentialData = data as { source?: SourceAttribution };
+  const source = potentialData.source;
   
   if (!source) {
     console.warn('⚠️ Citation Warning: Data rejected due to missing SourceAttribution metadata.');
@@ -24,10 +25,8 @@ export const validateCivicSource = (data: any): boolean => {
   }
 
   // Ensure last_verified_timestamp is valid ISO
-  try {
-    const d = new Date(source.last_verified_timestamp);
-    if (isNaN(d.getTime())) throw new Error();
-  } catch (e) {
+  const d = new Date(source.last_verified_timestamp);
+  if (isNaN(d.getTime())) {
     console.warn('⚠️ Integrity Warning: Invalid verification timestamp.');
     return false;
   }
@@ -46,7 +45,6 @@ export const filterAuthoritative = <T>(items: T[]): T[] => {
  * Standardizes source display for the UI
  */
 export const formatAttribution = (source: SourceAttribution): string => {
-  if (!source) return 'Unknown Source';
   const date = new Date(source.last_verified_timestamp).toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',

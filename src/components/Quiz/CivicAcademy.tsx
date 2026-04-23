@@ -24,9 +24,19 @@ const CivicAcademy: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [score, setScore] = useState(0);
 
+  const calculateResults = React.useCallback(() => {
+    if (!activeModule) return;
+    let finalScore = 0;
+    activeModule.quiz.forEach(q => {
+      if (answers[q.id] === q.correctAnswer) finalScore++;
+    });
+    setScore(finalScore);
+    setView('RESULTS');
+  }, [activeModule, answers]);
+
   // Exam Timer
   useEffect(() => {
-    let timer: any;
+    let timer: ReturnType<typeof setInterval> | undefined;
     if (view === 'EXAM' && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft(prev => prev - 1);
@@ -34,8 +44,8 @@ const CivicAcademy: React.FC = () => {
     } else if (timeLeft === 0 && view === 'EXAM') {
       calculateResults();
     }
-    return () => clearInterval(timer);
-  }, [view, timeLeft]);
+    return () => { if (timer) clearInterval(timer); };
+  }, [view, timeLeft, calculateResults]);
 
   const startModule = (module: LearningModule) => {
     setActiveModule(module);
@@ -56,18 +66,8 @@ const CivicAcademy: React.FC = () => {
     
     // Auto-advance or finish
     if (activeModule && currentQuestionIdx < activeModule.quiz.length - 1) {
-      setTimeout(() => setCurrentQuestionIdx(prev => prev + 1), 500);
+      setTimeout(() => { setCurrentQuestionIdx(prev => prev + 1); }, 500);
     }
-  };
-
-  const calculateResults = () => {
-    if (!activeModule) return;
-    let finalScore = 0;
-    activeModule.quiz.forEach(q => {
-      if (answers[q.id] === q.correctAnswer) finalScore++;
-    });
-    setScore(finalScore);
-    setView('RESULTS');
   };
 
   const reset = () => {
@@ -85,7 +85,7 @@ const CivicAcademy: React.FC = () => {
 
       <div className="module-grid">
         {ACADEMY_DATA.map((module) => (
-          <div key={module.id} className="module-card glass" onClick={() => startModule(module)}>
+          <div key={module.id} className="module-card glass" onClick={() => { startModule(module); }}>
             <div className="module-icon">
               <module.icon size={24} className="category-icon" />
               <PlayCircle className="start-icon" size={24} />
@@ -187,7 +187,7 @@ const CivicAcademy: React.FC = () => {
               <button 
                 key={i} 
                 className={`option-btn ${answers[q.id] === i ? 'selected' : ''}`}
-                onClick={() => handleAnswer(q.id, i)}
+                onClick={() => { handleAnswer(q.id, i); }}
                 disabled={isAnswered}
               >
                 <div className="opt-letter">{String.fromCharCode(65 + i)}</div>

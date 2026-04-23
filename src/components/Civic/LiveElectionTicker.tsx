@@ -32,7 +32,7 @@ const LiveElectionTicker: React.FC = () => {
         return Math.max(14200, prev + change);
       });
       setPulse(true);
-      setTimeout(() => setPulse(false), 800);
+      setTimeout(() => { setPulse(false); }, 800);
     }, 4000);
 
     // Real-time Firestore Freshness Check

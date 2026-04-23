@@ -50,7 +50,7 @@ const PollingLookup: React.FC<PollingLookupProps> = ({ constituencyId, onNext })
           className="input-primary" 
           placeholder="Enter EPIC Number (e.g. ABC1234567)"
           value={epicNumber}
-          onChange={(e) => setEpicNumber(e.target.value.toUpperCase())}
+          onChange={(e) => { setEpicNumber(e.target.value.toUpperCase()); }}
         />
         <button 
           className="btn-primary" 

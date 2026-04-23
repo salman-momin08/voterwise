@@ -14,28 +14,32 @@ const PINCODE_MAP: Record<string, Partial<AssemblyConstituency>> = {
     name: 'Chikkodi-Sadalga',
     number: 1,
     state_code: 'KA',
-    district: 'Belagavi'
+    district_id: 'belagavi',
+    parliamentary_constituency_id: 'ka-chikkodi'
   },
   '110001': {
     id: 'dl-new-delhi',
     name: 'New Delhi',
     number: 40,
     state_code: 'DL',
-    district: 'New Delhi'
+    district_id: 'new-delhi',
+    parliamentary_constituency_id: 'dl-new-delhi-pc'
   },
   '400001': {
     id: 'mh-colaba',
     name: 'Colaba',
     number: 187,
     state_code: 'MH',
-    district: 'Mumbai City'
+    district_id: 'mumbai-city',
+    parliamentary_constituency_id: 'mh-mumbai-south'
   },
   '600001': {
     id: 'tn-harbour',
     name: 'Harbour',
     number: 18,
     state_code: 'TN',
-    district: 'Chennai'
+    district_id: 'chennai',
+    parliamentary_constituency_id: 'tn-chennai-central'
   }
 };
 

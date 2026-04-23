@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Search, Navigation, CheckCircle } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { detectConstituency } from '../../engines/constituency';
 import type { IndianState, AssemblyConstituency, SourceAttribution } from '../../types/civic';
 import TrustIndicator from './TrustIndicator';
@@ -29,11 +29,20 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
   useEffect(() => {
     const fetchStates = async () => {
       const db = getFirebaseDb();
+      if (!db) return;
       const querySnapshot = await getDocs(collection(db, 'india'));
-      const statesList = querySnapshot.docs.map(doc => doc.data() as IndianState);
+      const statesList = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          code: String(data.code ?? ''),
+          name: String(data.name ?? ''),
+          ceo_portal_url: String(data.ceo_portal_url ?? ''),
+          source: data.source as SourceAttribution,
+        };
+      });
       setStates(statesList);
     };
-    fetchStates();
+    void fetchStates();
   }, []);
 
   useEffect(() => {
@@ -43,11 +52,23 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
     }
     const fetchACs = async () => {
       const db = getFirebaseDb();
+      if (!db) return;
       const querySnapshot = await getDocs(collection(db, 'india', selectedState, 'constituencies'));
-      const acList = querySnapshot.docs.map(doc => doc.data() as AssemblyConstituency);
+      const acList = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: String(data.name ?? ''),
+          number: Number(data.number ?? 0),
+          district_id: String(data.district_id ?? ''),
+          state_code: String(data.state_code ?? ''),
+          parliamentary_constituency_id: String(data.parliamentary_constituency_id ?? ''),
+          source: data.source as SourceAttribution,
+        };
+      });
       setConstituencies(acList);
     };
-    fetchACs();
+    void fetchACs();
   }, [selectedState]);
 
   const handlePincodeSearch = () => {
@@ -55,8 +76,17 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
     // Simulate network delay
     setTimeout(() => {
       const ac = detectConstituency(pincode);
-      if (ac) {
-        setDetectedAC({ ...ac, source: ECI_SOURCE } as AssemblyConstituency);
+      if (ac?.id && ac.name && ac.number && ac.district_id && ac.state_code && ac.parliamentary_constituency_id) {
+        const fullAC: AssemblyConstituency = {
+          id: ac.id,
+          name: ac.name,
+          number: ac.number,
+          district_id: ac.district_id,
+          state_code: ac.state_code,
+          parliamentary_constituency_id: ac.parliamentary_constituency_id,
+          source: ECI_SOURCE
+        };
+        setDetectedAC(fullAC);
       } else {
         alert('Could not detect constituency for this pincode. Please select manually.');
       }
@@ -79,7 +109,7 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
             className="input-primary" 
             placeholder="Enter Pincode (e.g. 110001)"
             value={pincode}
-            onChange={(e) => setPincode(e.target.value)}
+            onChange={(e) => { setPincode(e.target.value); }}
             style={{ paddingLeft: '40px' }}
           />
         </div>
@@ -102,7 +132,7 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
           <select 
             className="input-primary"
             value={selectedState} 
-            onChange={(e) => setSelectedState(e.target.value)}
+            onChange={(e) => { setSelectedState(e.target.value); }}
           >
             <option value="">Select State</option>
             {states.map(state => (
@@ -145,7 +175,7 @@ const ConstituencyFinder: React.FC<ConstituencyFinderProps> = ({ onSelected, ini
           <button 
             className="btn-primary" 
             style={{ width: '100%', marginTop: 'var(--space-md)' }}
-            onClick={() => onSelected(detectedAC)}
+            onClick={() => { onSelected(detectedAC); }}
           >
             Confirm & Continue <Navigation size={16} />
           </button>

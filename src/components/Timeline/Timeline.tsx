@@ -27,6 +27,7 @@ const Timeline: React.FC<TimelineProps> = ({ onStateChange }) => {
   const states = ['Delhi', 'Maharashtra', 'Uttar Pradesh', 'Karnataka', 'Tamil Nadu', 'West Bengal'];
 
   useEffect(() => {
+    let isMounted = true;
     const fetchLocalizedData = async () => {
       setLoading(true);
       try {
@@ -42,21 +43,23 @@ const Timeline: React.FC<TimelineProps> = ({ onStateChange }) => {
           fetchedSteps.push({ id: doc.id, ...doc.data() } as ElectionStep);
         });
 
-        // Functional default if Firestore is not yet populated
-        if (fetchedSteps.length === 0) {
-          setSteps(getIndianElectionData(selectedState));
-        } else {
-          setSteps(fetchedSteps);
+        if (isMounted) {
+          if (fetchedSteps.length === 0) {
+            setSteps(getIndianElectionData(selectedState));
+          } else {
+            setSteps(fetchedSteps);
+          }
         }
       } catch (error) {
         console.error("Error fetching timeline:", error);
-        setSteps(getIndianElectionData(selectedState));
+        if (isMounted) setSteps(getIndianElectionData(selectedState));
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
-    fetchLocalizedData();
+    void fetchLocalizedData();
+    return () => { isMounted = false; };
   }, [selectedState]);
 
   return (
