@@ -1,121 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { getFirebaseDb } from '../../lib/firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { useCivicStore } from '../../store/civicStore';
 import { User, FileText, Shield, GraduationCap, Gavel, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { ConstituencyMember, SourceAttribution } from '../../types/civic';
+import type { ConstituencyMember } from '../../types/civic';
 import TrustIndicator from '../Civic/TrustIndicator';
 import './SampleBallot.css';
 
-const INITIAL_CANDIDATES: ConstituencyMember[] = [
-  {
-    id: 'cand-1',
-    name: 'Shri Arvind Kejriwal',
-    party: 'AAP',
-    role: 'MLA',
-    constituency_id: 'New Delhi',
-    state_code: 'DL',
-    education: 'B.Tech (IIT Kharagpur)',
-    criminal_cases: 0,
-    assets: 'Verified',
-    official_profile_url: 'https://delhi.gov.in',
-    affidavit_url: 'https://affidavit.eci.gov.in/',
-    source: { authority_name: 'ECI', authority_url: 'https://eci.gov.in', last_verified_timestamp: new Date().toISOString() }
-  },
-  {
-    id: 'cand-2',
-    name: 'Shri Somnath Bharti',
-    party: 'AAP',
-    role: 'MLA',
-    constituency_id: 'Malviya Nagar',
-    state_code: 'DL',
-    education: 'M.Sc (IIT Delhi), LLB',
-    criminal_cases: 1,
-    assets: '₹1.2 Cr',
-    official_profile_url: 'https://delhi.gov.in',
-    affidavit_url: 'https://affidavit.eci.gov.in/',
-    source: { authority_name: 'ECI', authority_url: 'https://eci.gov.in', last_verified_timestamp: new Date().toISOString() }
-  },
-  {
-    id: 'cand-3',
-    name: 'Shri P. C. Mohan',
-    party: 'BJP',
-    role: 'MP',
-    constituency_id: 'Bangalore Central',
-    state_code: 'KA',
-    education: 'Intermediate',
-    criminal_cases: 0,
-    assets: '₹5.4 Cr',
-    official_profile_url: 'https://india.gov.in',
-    affidavit_url: 'https://affidavit.eci.gov.in/',
-    source: { authority_name: 'ECI', authority_url: 'https://eci.gov.in', last_verified_timestamp: new Date().toISOString() }
-  },
-  {
-    id: 'cand-4',
-    name: 'Smt. Tejasvi Surya',
-    party: 'BJP',
-    role: 'MP',
-    constituency_id: 'Bangalore South',
-    state_code: 'KA',
-    education: 'LLB',
-    criminal_cases: 0,
-    assets: '₹2.8 Cr',
-    official_profile_url: 'https://india.gov.in',
-    affidavit_url: 'https://affidavit.eci.gov.in/',
-    source: { authority_name: 'ECI', authority_url: 'https://eci.gov.in', last_verified_timestamp: new Date().toISOString() }
-  },
-  {
-    id: 'cand-5',
-    name: 'Shri Rahul Gandhi',
-    party: 'INC',
-    role: 'MP',
-    constituency_id: 'Wayanad',
-    state_code: 'KL',
-    education: 'M.Phil (Cambridge)',
-    criminal_cases: 0,
-    assets: 'Verified',
-    official_profile_url: 'https://india.gov.in',
-    affidavit_url: 'https://affidavit.eci.gov.in/',
-    source: { authority_name: 'ECI', authority_url: 'https://eci.gov.in', last_verified_timestamp: new Date().toISOString() }
-  }
-];
-
 const SampleBallot: React.FC = () => {
-  const [candidates, setCandidates] = useState<ConstituencyMember[]>(INITIAL_CANDIDATES);
-  const [selectedCandidate, setSelectedCandidate] = useState<ConstituencyMember | null>(INITIAL_CANDIDATES[0]);
-  const [loading, setLoading] = useState(true);
+  const { candidates, isCandidatesLoaded, subscribeToCandidates } = useCivicStore();
+  const [selectedCandidate, setSelectedCandidate] = useState<ConstituencyMember | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    const db = getFirebaseDb();
-    const q = collection(db, 'members');
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => {
-        const rawData = doc.data();
-        return {
-          id: doc.id,
-          name: String(rawData.name ?? ''),
-          party: String(rawData.party ?? ''),
-          role: (rawData.role === 'MP' ? 'MP' : 'MLA'),
-          constituency_id: String(rawData.constituency_id ?? ''),
-          state_code: String(rawData.state_code ?? ''),
-          official_profile_url: String(rawData.official_profile_url ?? ''),
-          education: String(rawData.education ?? ''),
-          criminal_cases: Number(rawData.criminal_cases ?? 0),
-          assets: String(rawData.assets ?? ''),
-          affidavit_url: String(rawData.affidavit_url ?? ''),
-          source: (rawData.source as SourceAttribution) || INITIAL_CANDIDATES[0].source
-        } as ConstituencyMember;
-      });
-      setCandidates(data);
-      setLoading(false);
-    });
-
+    const unsubscribe = subscribeToCandidates();
     return () => { unsubscribe(); };
-  }, []);
+  }, [subscribeToCandidates]);
 
-  if (loading) return <div className="ballot-skeleton glass animate-pulse" style={{ height: '600px' }}></div>;
+  useEffect(() => {
+    if (isCandidatesLoaded && candidates.length > 0 && !selectedCandidate) {
+      setSelectedCandidate(candidates[0]);
+    }
+  }, [isCandidatesLoaded, candidates, selectedCandidate]);
+
+  if (!isCandidatesLoaded) return <div className="ballot-skeleton glass animate-pulse" style={{ height: '600px' }}></div>;
 
   return (
     <div className="ballot-explorer">

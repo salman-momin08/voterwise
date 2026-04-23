@@ -1,55 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Clock } from 'lucide-react';
-import { getFirebaseDb } from '../../lib/firebase';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import type { Election, SourceAttribution } from '../../types/civic';
+import { useCivicStore } from '../../store/civicStore';
 import { detectElectionLifecycle } from '../../engines/lifecycle';
 import TrustIndicator from '../Civic/TrustIndicator';
 import './Timeline.css';
 
 const ElectionTimeline: React.FC = () => {
-  const [elections, setElections] = useState<Election[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { elections, isElectionsLoaded, subscribeToElections } = useCivicStore();
 
   useEffect(() => {
-    const db = getFirebaseDb();
-    const q = query(collection(db, 'schedule'), orderBy('date', 'asc'));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map(doc => {
-        const data = doc.data();
-        const rawPhases = (data.phases as Array<Record<string, unknown>>) ?? [];
-        
-        return {
-          id: doc.id,
-          title: String(data.title ?? ''),
-          type: (data.type ?? 'general') as 'general' | 'assembly' | 'bye-election',
-          year: Number(data.year ?? 0),
-          results_declared: Boolean(data.results_declared ?? false),
-          source: data.source as SourceAttribution,
-          phases: rawPhases.map(p => ({
-            id: String(p.id ?? ''),
-            phase_number: Number(p.phase_number ?? 0),
-            states: (p.states as string[] ?? []),
-            constituencies: (p.constituencies as string[] ?? []),
-            nomination_start: String(p.nomination_start ?? ''),
-            nomination_end: String(p.nomination_end ?? ''),
-            scrutiny_date: String(p.scrutiny_date ?? ''),
-            withdrawal_date: String(p.withdrawal_date ?? ''),
-            polling_date: String(p.polling_date ?? ''),
-            counting_date: String(p.counting_date ?? ''),
-            source: p.source as SourceAttribution
-          }))
-        } as Election;
-      });
-      setElections(list);
-      setLoading(false);
-    });
-
+    const unsubscribe = subscribeToElections();
     return () => { unsubscribe(); };
-  }, []);
+  }, [subscribeToElections]);
 
-  if (loading) return <div className="timeline-skeleton animate-pulse glass" style={{ height: '400px', borderRadius: 'var(--radius-xl)' }}></div>;
+  if (!isElectionsLoaded) return <div className="timeline-skeleton animate-pulse glass" style={{ height: '400px', borderRadius: 'var(--radius-xl)' }}></div>;
 
   // Find most relevant election (active or upcoming)
   const activeElection = elections[0] || null;
@@ -82,7 +46,7 @@ const ElectionTimeline: React.FC = () => {
           </div>
 
           <div className="timeline-items">
-            {activeElection.phases?.map((phase, idx) => (
+            {activeElection.phases?.map((phase: any, idx: number) => (
               <div key={phase.id} className="timeline-item">
                 <div className="item-marker">
                   <div className="marker-dot"></div>
