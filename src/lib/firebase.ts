@@ -13,7 +13,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-export const isFirebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId) || import.meta.env.MODE === 'test';
+export const isFirebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
 
 let app: FirebaseApp | undefined;
 let _auth: Auth | null = null;
