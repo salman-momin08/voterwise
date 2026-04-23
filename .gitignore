@@ -36,4 +36,5 @@ dist
 dist-ssr
 *.tsbuildinfo
 coverage
-node_modules
+*.agents
+*tests
