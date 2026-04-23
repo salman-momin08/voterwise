@@ -4,7 +4,7 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client", "google.maps"],
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "@testing-library/dom", "google.maps"],
     "skipLibCheck": true,
     "strict": true,
 
@@ -22,5 +22,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "tests/**/*.test.ts", "tests/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.test.tsx"]
 }
