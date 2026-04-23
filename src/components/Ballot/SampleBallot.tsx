@@ -3,7 +3,7 @@ import { getFirebaseDb } from '../../lib/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { User, FileText, Shield, GraduationCap, Gavel, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { ConstituencyMember } from '../../types/civic';
+import type { ConstituencyMember, SourceAttribution } from '../../types/civic';
 import TrustIndicator from '../Civic/TrustIndicator';
 import './SampleBallot.css';
 
@@ -106,7 +106,7 @@ const SampleBallot: React.FC = () => {
           assets: String(rawData.assets ?? ''),
           affidavit_url: String(rawData.affidavit_url ?? ''),
           source: (rawData.source as SourceAttribution) || INITIAL_CANDIDATES[0].source
-        };
+        } as ConstituencyMember;
       });
       setCandidates(data);
       setLoading(false);

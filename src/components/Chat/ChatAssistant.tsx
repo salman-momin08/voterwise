@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { FocusTrap } from 'focus-trap-react';
 import { getChatResponse } from '../../lib/gemini';
 import { Mic, Send, Volume2, CheckCircle, ExternalLink, Calendar as CalendarIcon, Sparkles, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +22,6 @@ interface ChatAssistantProps {
   onClose?: () => void;
 }
 
-import FocusTrap from 'focus-trap-react';
 
 const ChatAssistant: React.FC<ChatAssistantProps> = ({ context, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([]);
