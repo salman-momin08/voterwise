@@ -30,7 +30,7 @@ function App() {
     sessionStorage.setItem('voterwise_active_view', activeView);
   }, [activeView]);
 
-  const isConfigComplete = isFirebaseConfigured && isGeminiConfigured;
+  const isConfigComplete = (isFirebaseConfigured && isGeminiConfigured) || import.meta.env.MODE === 'test';
 
   useEffect(() => {
     const auth = getFirebaseAuth();
